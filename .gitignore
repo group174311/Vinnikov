@@ -1,0 +1,9 @@
+*.cproject
+*.mxproject
+*.project
+*.xml
+.settings/
+Drivers/
+startup/
+*.ld
+mx.scratch
