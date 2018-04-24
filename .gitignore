@@ -7,3 +7,4 @@ Drivers/
 startup/
 *.ld
 mx.scratch
+Debug/
