@@ -45,6 +45,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -54,6 +55,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +95,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  uint8_t str[] = "Hellow UART\r\n";	//Создаем массив, в каждом элементе которого 1 ASCI символ из нашей строки
 
   /* USER CODE END 2 */
 
@@ -105,6 +110,9 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+
+	  HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, HAL_MAX_DELAY);	//Отправляем наш массив - 1 символ конца строки
+	  HAL_Delay(1000);
 
   }
   /* USER CODE END 3 */
@@ -161,6 +169,25 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
+/* USART1 init function */
+static void MX_USART1_UART_Init(void)
+{
+
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 9600;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -188,12 +215,10 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PA0 PA1 PA2 PA3 
                            PA4 PA5 PA6 PA7 
-                           PA8 PA9 PA10 PA11 
-                           PA12 PA15 */
+                           PA8 PA11 PA12 PA15 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3 
                           |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7 
-                          |GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11 
-                          |GPIO_PIN_12|GPIO_PIN_15;
+                          |GPIO_PIN_8|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
