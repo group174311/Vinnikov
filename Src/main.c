@@ -65,7 +65,8 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+	uint8_t input = 0;
+	uint8_t output = 0;
 /* USER CODE END 0 */
 
 /**
@@ -101,7 +102,8 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  uint8_t str[] = "Hellow UART\r\n";	//Создаем массив, в каждом элементе которого 1 ASCI символ из нашей строки
+  HAL_UART_Receive_IT(&huart1, &output, 1);
+  HAL_UART_Receive_IT(&huart2, &input, 1);
 
   /* USER CODE END 2 */
 
@@ -114,8 +116,7 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 
-	  HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, HAL_MAX_DELAY);	//Отправляем наш массив - 1 символ конца строки
-	  HAL_Delay(1000);
+
 
   }
   /* USER CODE END 3 */
@@ -259,6 +260,16 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart == &huart1) {
+    		HAL_UART_Transmit_IT(&huart2, &output, 1);
+			HAL_UART_Receive_IT(&huart1, &output, 1);
+	}
+	if (huart == &huart2) {
+		HAL_UART_Transmit_IT(&huart1, &input, 1);
+		HAL_UART_Receive_IT(&huart2, &input, 1);
+	}
+}
 /* USER CODE END 4 */
 
 /**
